@@ -40,7 +40,7 @@ import { WebHandler } from "../lib/WebHandler";
 import { ChatCraftCommandRegistry } from "../lib/commands";
 import ChatHeader from "./ChatHeader";
 
-import DisableAudioPlayerButton from "../components/InterruptSpeechButton";
+import InterruptSpeechButton from "../components/InterruptSpeechButton";
 
 type ChatBaseProps = {
   chat: ChatCraftChat;
@@ -426,7 +426,7 @@ function ChatBase({ chat }: ChatBaseProps) {
       bgGradient="linear(to-b, white, gray.100)"
       _dark={{ bgGradient: "linear(to-b, gray.600, gray.700)" }}
     >
-      {!isQueueEmpty && <DisableAudioPlayerButton clearOnly={!streamingMessage} />}
+      <InterruptSpeechButton isVisible={!isQueueEmpty} clearOnly={!streamingMessage} />
 
       <GridItem colSpan={2}>
         {/* Default Provider Alert Banner*/}
