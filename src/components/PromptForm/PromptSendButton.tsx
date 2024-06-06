@@ -44,7 +44,7 @@ function MobilePromptSendButton({ isLoading }: PromptSendButtonProps) {
     return !!models.filter((model) => model.id.includes("tts"))?.length;
   }, [models]);
 
-  const { clearAudioQueue } = useAudioPlayer();
+  const { clearAudioQueue, isQueueEmpty } = useAudioPlayer();
 
   useDebounce(
     () => {
@@ -73,6 +73,48 @@ function MobilePromptSendButton({ isLoading }: PromptSendButtonProps) {
           isLoading={isLoading}
           icon={<TbSend />}
         />
+        {isTtsSupported && isQueueEmpty ? (
+          <Tooltip
+            label={
+              settings.textToSpeech.announceMessages
+                ? "Text-to-Speech Enabled"
+                : "Text-to-Speech Disabled"
+            }
+          >
+            <IconButton
+              type="button"
+              size="lg"
+              variant="solid"
+              aria-label={
+                settings.textToSpeech.announceMessages
+                  ? "Text-to-Speech Enabled"
+                  : "Text-to-Speech Disabled"
+              }
+              icon={
+                settings.textToSpeech.announceMessages ? (
+                  <MdVolumeUp size={25} />
+                ) : (
+                  <MdVolumeOff size={25} />
+                )
+              }
+              onClick={() => {
+                if (settings.textToSpeech.announceMessages) {
+                  // Flush any remaining audio clips being announced
+                  clearAudioQueue();
+                }
+                setSettings({
+                  ...settings,
+                  textToSpeech: {
+                    ...settings.textToSpeech,
+                    announceMessages: !settings.textToSpeech.announceMessages,
+                  },
+                });
+              }}
+            />
+          </Tooltip>
+        ) : isTtsSupported ? (
+          <InterruptSpeechButton size={"lg"} clearOnly={!isLoading} />
+        ) : null}
         <MenuButton
           as={IconButton}
           size="md"
@@ -263,7 +305,7 @@ function DesktopPromptSendButton({ isLoading }: PromptSendButtonProps) {
           </Button>
         </Tooltip>
       ) : isTtsSupported ? (
-        <InterruptSpeechButton clearOnly={!isLoading} />
+        <InterruptSpeechButton size={"sm"} clearOnly={!isLoading} />
       ) : null}
       <Menu placement="top-end" strategy="fixed" closeOnSelect={false}>
         <MenuButton
